@@ -1,8 +1,3 @@
-"""
-Created on Tue Jul 22 00:47:05 2014
-
-@author: alina, zzhang
-"""
 
 import time
 import socket
@@ -268,7 +263,8 @@ class Server:
 # Start the game when client asks for
                 
             elif msg["action"] == "game":
-                os.system('gameTrialOne.py') #change file NAME Please!
+                pass
+            #    os.system('gameTrialFive.py') #change file NAME Please!
 #=============================================================================
 
 # ==============================================================================

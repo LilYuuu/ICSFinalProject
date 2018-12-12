@@ -1,11 +1,8 @@
-"""
-Created on Sun Apr  5 00:00:32 2015
 
-@author: zhengzhang
-"""
 from chat_utils import *
 import json
 from cryptography.fernet import Fernet
+import os
 
 class ClientSM:
     def __init__(self, s):
@@ -116,11 +113,16 @@ class ClientSM:
                         self.out_msg += poem + '\n\n'
                     else:
                         self.out_msg += 'Sonnet ' + poem_idx + ' not found\n\n'
-                        
+                    
+#=============================================================================
+# If client want game, then start the game
                 elif my_msg[0] == 'g':
                      mysend(self.s, json.dumps({"action":"game"}))
+                     print('Enjoy the game!')
+                     os.system('gameTrialFive.py')
+                     
                    #  self.out_msg += 'Enjoy the game!\n"
-
+#=============================================================================
                 else:
                     self.out_msg += menu
 

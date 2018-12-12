@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sun Apr  5 09:58:31 2015
 
-@author: zhengzhang
-"""
 S_ALONE = 0
 S_TALKING = 1
 
