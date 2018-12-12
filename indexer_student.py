@@ -44,7 +44,8 @@ class Index:
         """
         # IMPLEMENTATION
         # ---- start your code ---- #
-        pass
+        self.msgs.append(m)
+        self.total_msgs += 1
 
         # ---- end of your code --- #
         return
@@ -62,7 +63,13 @@ class Index:
 
         # IMPLEMENTATION
         # ---- start your code ---- #
-        pass
+        words = m.split()
+        for word in words:
+            if (word in self.index):
+                self.index[word].append(self.total_msgs - 1)
+            else :
+                self.index[word] = [self.total_msgs - 1]
+                self.total_words += 1
 
         # ---- end of your code --- #
         return
@@ -83,7 +90,10 @@ class Index:
         msgs = []
         # IMPLEMENTATION
         # ---- start your code ---- #
-        pass
+        
+        for li in self.index[term]:
+          #  msgs.append(self.msgs[li])
+          msgs.append((li,self.msgs[li]))
 
         # ---- end of your code --- #
         return msgs
@@ -104,7 +114,13 @@ class PIndex(Index):
         """
         # IMPLEMENTATION
         # ---- start your code ---- #
-        pass
+        self.lines = open(self.name,'r').readlines()
+     #   print (self.lines)
+        
+        for sentence in self.lines:
+            self.add_msg_and_index(sentence)
+
+        
 
         # ---- end of your code --- #
         return
@@ -135,7 +151,17 @@ class PIndex(Index):
         poem = []
         # IMPLEMENTATION
         # ---- start your code ---- #
-        pass
+        startLine = self.int2roman[p]
+        endLine = self.int2roman[p+1]
+        start = self.search(startLine + '.')
+        end = self.search(endLine + '.')
+     #   print (start,end)
+        startInd = start[0][0]
+        endInd = end[0][0]
+      #  print (startInd,endInd)
+        for i in range(startInd, endInd):
+            poem.append(self.lines[i])
+        
 
         # ---- end of your code --- #
         return poem
@@ -146,5 +172,5 @@ if __name__ == "__main__":
     # the next two lines are just for testing
     p3 = sonnets.get_poem(3)
     print(p3)
-    s_love = sonnets.search("love")
+    s_love = sonnets.search("black")
     print(s_love)
