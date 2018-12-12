@@ -140,9 +140,10 @@ class Server:
                 # IMPLEMENTATION
                 # ---- start your code ---- #
                 mesag = msg["message"]
-                self.indices[from_name].add_msg_and_index(mesag)
+              #  self.indices[from_name].add_msg_and_index(mesag)
                 f = Fernet(self.group.get_key(from_name))
                 mesag_decrypted = f.decrypt(mesag.encode('utf-8'))
+                self.indices[from_name].add_msg_and_index(mesag_decrypted.decode('utf-8'))
 
                 # ---- end of your code --- #
 
@@ -171,6 +172,13 @@ class Server:
                 the_guys = self.group.list_me(from_name)
                 self.group.disconnect(from_name)
                 the_guys.remove(from_name)
+                
+                self.key = Fernet.generate_key()
+                self.group.store_key(from_name,self.key)
+                print( ' done storing key')
+                mysend(from_sock, json.dumps(
+                        {"action": "keyPass", "key": self.key.decode('utf-8')}))
+                
                 if len(the_guys) == 1:  # only one left
                     g = the_guys.pop()
                     to_sock = self.logged_name2sock[g]
@@ -226,15 +234,15 @@ class Server:
 
                 # IMPLEMENTATION
                 # ---- start your code ---- #
-                userName = self.logged_sock2name(from_sock)
+                userName = self.logged_sock2name[from_sock]
                 f = Fernet(self.group.get_key(userName))
                 del userName
                 search_rslt = ''
                 target_txt = msg["target"]
-                target_txt_decrypted = f.decrypt(target_txt.decode('utf-8'))
+                target_txt_decrypted = f.decrypt(target_txt.encode('utf-8'))
                 for User,inx in self.indices.items():
                     search_rslt += User+":\n"
-                    for line in inx.search(target_txt_decrypted):
+                    for line in inx.search(target_txt_decrypted.decode('utf-8')):
                         search_rslt += str(line[0]) + ': ' + line [1] + "\n"
                     
                     print(search_rslt)
