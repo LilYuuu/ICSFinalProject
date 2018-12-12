@@ -184,6 +184,7 @@ class Server:
                 print( ' done storing key')
                 mysend(from_sock, json.dumps(
                         {"action": "keyPass", "key": self.key.decode('utf-8')}))
+                print( ' done sending key')
 #=============================================================================
                 if len(the_guys) == 1:  # only one left
                     g = the_guys.pop()
