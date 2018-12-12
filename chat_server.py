@@ -65,13 +65,15 @@ class Server:
                                 self.indices[name] = indexer.Index(name)
                         print(name + ' logged in')
                         self.group.join(name)
+#=============================================================================
+# Generate, store, and send a new key when someone logs in
                         self.key = Fernet.generate_key()
                         self.group.store_key(name,self.key)
                         print( ' done storing key')
                         mysend(sock, json.dumps(
                             {"action": "login", "status": "ok","key": self.key.decode('utf-8')}))
                         print(' done sending key ')
-                     #   self.key = ''
+#=============================================================================
                     else:  # a client under this name has already logged in
                         mysend(sock, json.dumps(
                             {"action": "login", "status": "duplicate"}))
@@ -140,16 +142,19 @@ class Server:
                 # IMPLEMENTATION
                 # ---- start your code ---- #
                 mesag = msg["message"]
-              #  self.indices[from_name].add_msg_and_index(mesag)
+#=============================================================================
+# Decrypt the message
                 f = Fernet(self.group.get_key(from_name))
                 mesag_decrypted = f.decrypt(mesag.encode('utf-8'))
                 self.indices[from_name].add_msg_and_index(mesag_decrypted.decode('utf-8'))
-
+#=============================================================================
                 # ---- end of your code --- #
 
                 the_guys = self.group.list_me(from_name)[1:]
               #  print(the_guys)
                 for g in the_guys:
+#=============================================================================
+# Encrypt the message with keys of different users and send to them, then delete the string message
                     f = Fernet(self.group.get_key(g))
                     mesag_encrypted = f.encrypt(mesag_decrypted)
                     to_sock = self.logged_name2sock[g]
@@ -161,7 +166,7 @@ class Server:
                     mysend( to_sock, json.dumps(
                         {"action": "exchange", "msg": mesag_encrypted.decode('utf-8'), "from":from_name}))
                 del mesag_decrypted
-
+#=============================================================================
                     # ---- end of your code --- #
 
 # ==============================================================================
@@ -172,13 +177,14 @@ class Server:
                 the_guys = self.group.list_me(from_name)
                 self.group.disconnect(from_name)
                 the_guys.remove(from_name)
-                
+#=============================================================================
+# When disconnect, generate a new key, store and send it
                 self.key = Fernet.generate_key()
                 self.group.store_key(from_name,self.key)
                 print( ' done storing key')
                 mysend(from_sock, json.dumps(
                         {"action": "keyPass", "key": self.key.decode('utf-8')}))
-                
+#=============================================================================
                 if len(the_guys) == 1:  # only one left
                     g = the_guys.pop()
                     to_sock = self.logged_name2sock[g]
@@ -234,6 +240,8 @@ class Server:
 
                 # IMPLEMENTATION
                 # ---- start your code ---- #
+#=============================================================================
+# Decrypt target, search, send encrypted result to client
                 userName = self.logged_sock2name[from_sock]
                 f = Fernet(self.group.get_key(userName))
                 del userName
@@ -254,9 +262,13 @@ class Server:
                 # ---- end of your code --- #
                 mysend(from_sock, json.dumps(
                     {"action": "search", "results": search_rslt_encrypted.decode('utf-8')}))
+#=============================================================================
+#=============================================================================
+# Start the game when client asks for
                 
             elif msg["action"] == "game":
-                os.system('gameTrialOne.py') #unknown usability
+                os.system('gameTrialOne.py') #change file NAME Please!
+#=============================================================================
 
 # ==============================================================================
 #                 the "from" guy really, really has had enough

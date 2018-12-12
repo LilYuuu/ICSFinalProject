@@ -71,7 +71,9 @@ class Client:
                 self.state = S_LOGGEDIN
                 self.sm.set_state(S_LOGGEDIN)
                 self.sm.set_myname(self.name)
+# Storing the key to state machine============================================
                 self.sm.set_key(response["key"].encode('utf-8'))
+#=============================================================================
                 self.print_instructions()
                 return (True)
             elif response["status"] == 'duplicate':

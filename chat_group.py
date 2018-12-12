@@ -32,13 +32,15 @@ class Group:
     def join(self, name):
         self.members[name] = S_ALONE
         return
-    
+#=============================================================================  
+# Two dunctions, one stores the key, one get key, used by server  
     def store_key(self,name,key):
         self.key_list[name] = key
         return
     
     def get_key(self,name):
         return self.key_list[name]
+#=============================================================================
 
     def is_member(self, name):
         return name in self.members.keys()

@@ -22,8 +22,10 @@ class ClientSM:
     def get_state(self):
         return self.state
     
+#Set key======================================================================
     def set_key(self,key):
         self.key = key
+#=============================================================================
 
     def set_myname(self, name):
         self.me = name
@@ -91,6 +93,8 @@ class ClientSM:
 
                 elif my_msg[0] == '?':
                     term = my_msg[1:].strip()
+#=============================================================================
+# Send encrypted target, recerive result and decrypt it
                     f = Fernet(self.key)
                     term_encrypted = f.encrypt(term.encode('utf-8'))
                     mysend(self.s, json.dumps({"action":"search", "target":term_encrypted.decode('utf-8')}))
@@ -100,6 +104,7 @@ class ClientSM:
                     if (len(search_rslt_decrypted)) > 0:
                         self.out_msg += 'Encrypted search result: ' + search_rslt + '\n'
                         self.out_msg += search_rslt_decrypted.decode('utf-8') + '\n\n'
+#=============================================================================
                     else:
                         self.out_msg += '\'' + term + '\'' + ' not found\n\n'
 
@@ -151,41 +156,38 @@ class ClientSM:
         elif self.state == S_CHATTING:
             f = Fernet(self.key)
             if len(my_msg) > 0:     # my stuff going out
-                
+#=============================================================================
+# Send my message encrypted
                 my_msg_encrypted = f.encrypt(my_msg.encode('utf-8'))
                 mysend(self.s, json.dumps({"action":"exchange", "from":"[" + self.me + "]", "message":my_msg_encrypted.decode('utf-8')}))
                 print()
+#=============================================================================
                 if my_msg == 'bye':
                     self.disconnect()
-                    ''' print(peer_msg)
-                    server_msg = json.loads(peer_msg)
-                    print (server_msg)
-                    server_send_key = server_msg['key']
-                    self.set_key(server_send_key.encode('utf-8'))
-                    '''
-                  #  self.state = S_LOGGEDIN
-                 #   self.peer = ''
+                
             if len(peer_msg) > 0:    # peer's stuff, coming in
                 
-
                 # ----------your code here------#
                 peer_msg = json.loads(peer_msg)
+#=============================================================================
+# Back to LOGGEDIN state after receiving, decrypting, and storing the new key
                 if(peer_msg['action'] == 'keyPass'):
                     server_send_key = peer_msg['key']
                     self.set_key(server_send_key.encode('utf-8'))
                     self.state = S_LOGGEDIN
                     self.peer = ''
-             #   peer_msg_decrypted = f.decrypt(peer_msg['msg'].encode('utf-8'))
+#=============================================================================
+#=============================================================================
+# Decrypt received message from server and show both raw and decrypted messages
                 if (peer_msg['action'] == 'exchange'):
                     peer_msg_decrypted = f.decrypt(peer_msg['msg'].encode('utf-8'))
                     print(peer_msg['from'],':')
                     print('encrypted message: ' + peer_msg['msg'])
                     print('\ndecrypted message: ' + peer_msg_decrypted.decode('utf-8'))
                     print('\n')
-                   # print(peer_msg['msg'],'\n')
+#=============================================================================
                 elif (peer_msg['action'] == 'disconnect'):
                     print(peer_msg['msg'])
-                   # print (peer_msg['msg'])
                     
 
 
